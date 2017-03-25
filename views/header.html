@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <title>{{$title}}</title>
+        <link rel="stylesheet" href="@@static/style.css@@" />
+<style>
+  a.nav { float: right; margin: 3px;}
+</style>
+    </head>
+    <body>
+        <div class="content">
+
+[[ include_once 'include/util.inc'; ]]
+[[ if (isLoggedIn()) : ]]
+  Welcome, {{getName(current_user())}}
+    <a class='nav' href='@@logout@@'>Log Out</a>
+    <a class='nav' href="@@users/view/{{current_user()['user_id']}}@@">My Profile</a>
+[[ else : ]]
+    <a class='nav' href='@@login@@'>Log in</a>
+    <a class='nav' href='@@users/add@@'>Register</a>
+[[ endif; ]]
+    <a class='nav' href='@@index@@'>Home</a>
