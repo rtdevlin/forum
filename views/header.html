@@ -1,23 +1,24 @@
+[[ include_once 'include/util.inc'; ]]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
         <title>{{$title}}</title>
         <link rel="stylesheet" href="@@static/style.css@@" />
-<style>
-  a.nav { float: right; margin: 3px;}
-</style>
     </head>
     <body>
         <div class="content">
-
-[[ include_once 'include/util.inc'; ]]
+            <div class='header'>
+<ul id="navigation">
 [[ if (isLoggedIn()) : ]]
-  Welcome, {{getName(current_user())}}
-    <a class='nav' href='@@logout@@'>Log Out</a>
-    <a class='nav' href="@@users/view/{{current_user()['user_id']}}@@">My Profile</a>
+  <li class="left">Welcome, {{getName(current_user())}}</li>
+  <li class="right"><a href="@@logout@@">Log out</a></li>
+  <li class="right"><a href="@@user/view/{{current_user()['user_id']}}@@">My profile</a></li>
 [[ else : ]]
-    <a class='nav' href='@@login@@'>Log in</a>
-    <a class='nav' href='@@users/add@@'>Register</a>
+  <li class="right"><a href="@@login@@">Log in</a></li>
+  <li class="right"><a href="@@user/register@@">Register</a></li>
 [[ endif; ]]
-    <a class='nav' href='@@index@@'>Home</a>
+  <li class="right"><a href="@@index@@">Home</a></li>
+</ul>
+            </div>
+            <div style='clear: both;'>
