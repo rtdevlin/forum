@@ -177,7 +177,7 @@ class Question extends Model {
         $this -> validate(true);
         $this -> clean();
         $db = Db::getDb();
-        $statement = $db -> prepare("UPDATE questions SET title = :title, content = :content, WHERE id = :id");
+        $statement = $db -> prepare("UPDATE questions SET title = :title, content = :content WHERE id = :id");
         $statement -> bindParam(':title', $this -> title);
         $statement -> bindParam(':content', $this -> content);
         $statement -> bindParam(':id', $this -> id);

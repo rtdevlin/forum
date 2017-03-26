@@ -101,9 +101,16 @@ class QuestionTag extends Model {
 
     function delete() {
         $db = Db::getDb();
-        $statement = $db -> prepare("DELETE FROM questions WHERE question_id = :question_id and tag_id = :tag_id");
+        $statement = $db -> prepare("DELETE FROM question_tags WHERE question_id = :question_id and tag_id = :tag_id");
         $statement -> bindParam(':question_id', $this -> question_id);
         $statement -> bindParam(':tag_id', $this -> tag_id);
+        $statement -> execute();
+    }
+
+    static function deleteByQuestionId($question_id) {
+        $db = Db::getDb();
+        $statement = $db -> prepare("DELETE FROM question_tags WHERE question_id = :question_id");
+        $statement -> bindParam(':question_id', $question_id);
         $statement -> execute();
     }
 }

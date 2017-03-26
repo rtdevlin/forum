@@ -6,6 +6,10 @@ function safeParam($arr, $index, $default) {
     return $default;
 }
 
+function resetTags($question_id){
+  QuestionTag::deleteByQuestionId($question_id);
+}
+
 function buildQuestionTagBridge($question, $tags_array){
   foreach($tags_array as $tag){
     $params = array(

@@ -119,6 +119,7 @@ function validate_present($elements) {
 function post_update($params) {
   ensureLoggedIn();
   $question = new Question($params);
+  $split_tags = splitTags($params['tags']);
   $validator = $question -> validate();
   if($validator -> hasErrors()){
     renderTemplate(
@@ -133,6 +134,9 @@ function post_update($params) {
   else{
     $question -> update();
     $id = $question -> getId();
+    $tags = insertTags($split_tags);
+    resetTags($id);
+    buildQuestionTagBridge($question, $tags);
     redirectRelative("questions/view/$id");
   }
 }
