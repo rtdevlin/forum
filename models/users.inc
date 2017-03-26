@@ -9,26 +9,29 @@ class User extends Model {
     private $validator;
 
     //public function __construct($id, $description, $done = false) {
-    public function __construct($fields = array(), $validator){
+    public function __construct($fields = array(), $validator = null){
         parent::__construct($fields);
         $this -> setFirstName(safeParam($fields, 'first_name'));
         $this -> setLastName(safeParam($fields, 'last_name'));
         $this -> setEmail(safeParam($fields, 'email'));
         $this -> setPassword(safeParam($fields, 'password'));
         if(!isset($validator)){
-          $validator = new Validator();
+          $this -> validator = new Validator();
+        }
+        else {
+          $this -> validator = $validator;
         }
     }
 
     public function validate($throw = false) {
-        $validator -> required('first_name', $this -> first_name, "First Name is required");
-        $validator -> required('last_name', $this -> last_name, "Last Name is required");
-        $validator -> required('email', $this -> email, "Email is required");
-        $validator -> required('password', $this -> password, "Password is required");
-        if ($throw && $validator -> hasErrors()) {
-            throw new IllegalStateException(implode(", ", $validator -> allErrors()));
+        $this -> validator -> required('first_name', $this -> first_name, "First Name is required");
+        $this -> validator -> required('last_name', $this -> last_name, "Last Name is required");
+        $this -> validator -> required('email', $this -> email, "Email is required");
+        $this -> validator -> required('password', $this -> password, "Password is required");
+        if ($throw && $this -> validator -> hasErrors()) {
+            throw new IllegalStateException(implode(", ", $this -> validator -> allErrors()));
         }
-        return $validator;
+        return $this -> validator;
     }
 
     private function clean() {
@@ -92,23 +95,24 @@ class User extends Model {
         return new self($row);
     }
 
-    static function isValidUser($email, $password) {
+    static function isValid($email, $password) {
         $db = Db::getDb();
         $st = $db -> prepare('SELECT * FROM users WHERE email = :email');
         $st -> bindParam(':email', $email);
         $st -> execute();
-        $user = $st -> fetch(PDO::FETCH_ASSOC);
+        $row = $st -> fetch(PDO::FETCH_ASSOC);
+        $user = new self($row);
         if (isset($user)) {
-          return $user['password'] === $password;
+          return $user -> getPassword() === $password;
         }
         else {
           return false;
         }
     }
-    static function userExists($email) {
+    public function userExists() {
         $db = Db::getDb();
         $st = $db -> prepare('SELECT count(*) as cnt FROM users WHERE email = :email');
-        $st -> bindParam(':email', $email);
+        $st -> bindParam(':email', $this -> email);
         $st -> execute();
         $count = $st -> fetch(PDO::FETCH_ASSOC);
         if (isset($count) ) {
@@ -137,7 +141,7 @@ class User extends Model {
         $this -> validate(true);
         $this -> clean();
         $db = Db::getDb();
-        $statement = $db -> prepare("UPDATE questions SET first_name = :first_name, last_name = :last_name, email = :email, password = :password WHERE id = :id");
+        $statement = $db -> prepare("UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, password = :password WHERE id = :id");
         $statement -> bindParam(':first_name', $this -> first_name);
         $statement -> bindParam(':last_name', $this -> last_name);
         $statement -> bindParam(':email', $this -> email);
@@ -149,7 +153,7 @@ class User extends Model {
 
     function delete() {
         $db = Db::getDb();
-        $statement = $db -> prepare("DELETE FROM questions WHERE id = :id");
+        $statement = $db -> prepare("DELETE FROM users WHERE id = :id");
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
     }

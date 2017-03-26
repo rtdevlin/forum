@@ -55,7 +55,7 @@ function get_edit($params) {
         die("No user specified");
     }
     $authenticated = authenticateUser($id);
-    $user = findUserById($id);
+    $user = User::findById($id);
     if (!$user) {
         die("No user found.");
     }
@@ -76,32 +76,33 @@ function get_edit($params) {
 }
 
 function get_add($params) {
-    // @formatter:off
-    renderTemplate(
-        "views/user_add.inc",
-        array(
-            'title' => 'Register!'
-        )
-    );
-    // @formatter:on
+  // @formatter:off
+  $user = new User($params);
+  renderTemplate(
+      "views/user_add.inc",
+      array(
+        'title' => 'Register!',
+        'user' => $user
+      )
+  );
+  // @formatter:on
 }
 
 function post_add($params) {
-  if(!requiredParamsPresent($params)){
-    $request_string = "views/user_add.inc";
-    validateChanges($params, $request_string,
+  $user = new User($params);
+  $validator = $user -> validate();
+  if($validator -> hasErrors()){
+    renderTemplate(
+      "views/user_add.inc",
       array (
         'title' => 'Add A User',
-        'user' => $params
+        'user' => $user,
+        'errors' => $validator -> allErrors()
       )
     );
   }
   else {
-    $first_name = htmlentities($_POST['first_name']);
-    $last_name = htmlentities($_POST['last_name']);
-    $email = htmlentities($_POST['email']);
-    $password = htmlentities($_POST['password']);
-    if(userExists($email)){
+    if($user -> userExists()){
       renderTemplate(
           "views/login_form.inc",
           array(
@@ -111,14 +112,15 @@ function post_add($params) {
       );
     }
     else {
-      addUser($first_name, $last_name, $email, $password);
-          $_SESSION['loggedin'] = true;
-          if (isset($_SESSION['redirect'])) {
-              $redirect = $_SESSION['redirect'];
-              redirect($redirect);
-              exit();
-          }
-          redirectRelative("index");
+      $user -> insert();
+      loadUser($user -> getEmail());
+      $_SESSION['loggedin'] = true;
+      if (isset($_SESSION['redirect'])) {
+        $redirect = $_SESSION['redirect'];
+        redirect($redirect);
+        exit();
+      }
+      redirectRelative("index");
     }
   }
 }
@@ -135,35 +137,22 @@ function validate_present($elements) {
 
 function post_update($params) {
   ensureLoggedIn();
-  if(!requiredParamsPresent($params)){
-    $request_string = "views/user_edit.inc";
-    validateChanges($params, $request_string,
+  $user = new User($params);
+  $validator = $user -> validate();
+  if($validator -> hasErrors()){
+    renderTemplate(
+      "views/user_edit.inc",
       array (
-        'title' => 'Editing User',
-        'user' => $params
-      )
+          'title' => 'Editing User',
+          'user' => $user,
+          'errors' => $validator -> allErrors()
+        )
     );
   }
   else{
-    $user_id = $_POST['user_id'];
-    $first_name = htmlentities($_POST['first_name']);
-    $last_name = htmlentities($_POST['last_name']);
-    $email = htmlentities($_POST['email']);
-    $password = htmlentities($_POST['password']);
-    if(userExists($email)){
-      renderTemplate(
-          "views/user_edit.inc",
-          array(
-              'title' => 'Edit User',
-              'errors' => array("Email $email already exists."),
-              'user' => $params
-          )
-      );
-    }
-    else {
-      updateUser($user_id, $first_name, $last_name, $email, $password);
-      redirectRelative("users/view/$id");
-    }
+    $user -> update();
+    $id = $user -> getId();
+    redirectRelative("users/view/$id");
   }
 }
 

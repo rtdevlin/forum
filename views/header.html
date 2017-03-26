@@ -13,10 +13,10 @@
 [[ if (isLoggedIn()) : ]]
   <li class="left">Welcome, {{getName(current_user())}}</li>
   <li class="right"><a href="@@logout@@">Log out</a></li>
-  <li class="right"><a href="@@user/view/{{current_user()}}@@">My profile</a></li>
+  <li class="right"><a href="@@users/view/{{current_user()}}@@">My profile</a></li>
 [[ else : ]]
   <li class="right"><a href="@@login@@">Log in</a></li>
-  <li class="right"><a href="@@user/register@@">Register</a></li>
+  <li class="right"><a href="@@users/add@@">Register</a></li>
 [[ endif; ]]
   <li class="right"><a href="@@index@@">Home</a></li>
 </ul>

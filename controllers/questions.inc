@@ -45,7 +45,7 @@ function get_edit($params) {
     if (!$id) {
         die("No question specified");
     }
-    $question = findQuestionById($id);
+    $question = Question::findById($id);
     if (!$question) {
         die("No question found.");
     }
@@ -67,33 +67,34 @@ function get_edit($params) {
 
 function get_add($params) {
     // @formatter:off
+  $question = new Question($params);
   ensureLoggedIn();
-    renderTemplate(
-        "views/question_add.inc",
-        array(
-            'title' => 'Add A Question'
-        )
-    );
+  renderTemplate(
+      "views/question_add.inc",
+      array(
+          'title' => 'Add A Question',
+          'question' => $question
+      )
+  );
     // @formatter:on
 }
 
 function post_add($params) {
   ensureLoggedIn();
-  if(!requiredParamsPresent($params)){
-    $request_string = "views/question_add.inc";
-    validateChanges($params, $request_string,
+  $question = new Question($params);
+  $validator = $question -> validate();
+  if($validator -> hasErrors()){
+    renderTemplate(
+      "views/question_add.inc",
       array (
         'title' => 'Add A Question',
-        'question' => $params
+        'question' => $question,
+        'errors' => $validator -> allErrors()
       )
     );
   }
   else {
-    $title = htmlentities($_POST['title']);
-    $content = htmlentities($_POST['content']);
-    $tags = htmlentities($_POST['tags']);
-    $user_id = current_user()['user_id'];
-    addQuestion($title, $content, $tags, $user_id);
+    $question -> insert();
     redirectRelative("index");
   }
 }
@@ -110,21 +111,21 @@ function validate_present($elements) {
 
 function post_update($params) {
   ensureLoggedIn();
-  if(!requiredParamsPresent($params)){
-    $request_string = "views/question_edit.inc";
-    validateChanges($params, $request_string,
+  $question = new Question($params);
+  $validator = $question -> validate();
+  if($validator -> hasErrors()){
+    renderTemplate(
+      "views/question_edit.inc",
       array (
         'title' => 'Editing Question',
-        'question' => $params
+        'question' => $question,
+        'errors' => $validator -> allErrors()
       )
     );
   }
   else{
-    $id = $_POST['id'];
-    $title = htmlentities($_POST['title']);
-    $content = htmlentities($_POST['content']);
-    $tags = htmlentities($_POST['tags']);
-    updateQuestion($id, $title, $content, $tags);
+    $question -> update();
+    $id = $question -> getId();
     redirectRelative("questions/view/$id");
   }
 }

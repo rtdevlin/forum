@@ -3,15 +3,16 @@
 <h1>{{$title}}</h1>
 <div class='inputs'>
     <form action="@@users/update@@" method="post">
-        <input type="hidden" id="user_id" name="user_id" value="{{$user['user_id']}}" />
+        <input type="hidden" id="id" name="id" value="{{$user -> getId()}}" />
+        <input type="hidden" id="email" name="email" value="{{$user -> getEmail()}}" />
         <label for="title">First Name:</label>
-        <input type="text" id="first_name" name="first_name" value="{{$user['first_name']}}" />
+        <input type="text" id="first_name" name="first_name" value="{{$user -> getFirstName()}}" />
         <label for="content">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" value="{{$user['last_name']}}" />
-        <label for="content">Email:</label>
-        <input type="text" id="email" name="email" value="{{$user['email']}}" />
+        <input type="text" id="last_name" name="last_name" value="{{$user -> getLastName()}}" />
+        <span>Email:</span><br />
+        <span>{{$user -> getEmail()}}</span>
         <label for="content">Password:</label>
-        <input type="password" id="password" name="password" value="{{$user['password']}}" /><br><br>
+        <input type="password" id="password" name="password" value="{{$user -> getPassword()}}" /><br><br>
         <input type="submit" value="Save" />
     <form>
 </div>

@@ -14,8 +14,9 @@ function getName($id){
 }
 
 function authenticateUser($id){
-  return current_user()['user_id'] === $id;
+  return current_user() === $id;
 }
+
 function validateChanges($params, $redirect_string, $opts = array()){
     $missing_params = array();
     foreach(REQUIRED_PARAMS as $param){
@@ -25,13 +26,16 @@ function validateChanges($params, $redirect_string, $opts = array()){
     $opts['errors'] = $missing_params;
     renderTemplate( $redirect_string, $opts);
   }
+
 function loadUser($email) {
-  $user = findUserByEmail($email);
-  $_SESSION['current_user'] = $user['user_id'];
+  $user = User::findUserByEmail($email);
+  $_SESSION['current_user'] = $user -> getId();
 }
+
 function current_user(){
   return $_SESSION['current_user'];
 }
+
 function isLoggedIn() {
     $inSession = session_id();
     if (!empty($inSession)) {

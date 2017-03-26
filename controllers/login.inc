@@ -2,12 +2,6 @@
 include_once "include/util.inc";
 include_once "models/users.inc";
 
-function safeParam($arr, $index, $default) {
-    if ($arr && isset($arr[$index])) {
-        return $arr[$index];
-    }
-    return $default;
-}
 
 function get_index($params) {
     // @formatter:off
@@ -22,10 +16,10 @@ function get_index($params) {
 }
 
 function post_index($params) {
-    $username = safeParam($_REQUEST, 'email', false);
+    $email = safeParam($_REQUEST, 'email', false);
     $password = safeParam($_REQUEST, 'password', false);
-    if (isValidUser($username, $password)) {
-        loadUser($username);
+    if (User::isValid($email, $password)) {
+        loadUser($email);
         $_SESSION['loggedin'] = true;
         if (isset($_SESSION['redirect'])) {
             $redirect = $_SESSION['redirect'];
@@ -40,7 +34,7 @@ function post_index($params) {
         array(
             'title' => 'Login',
             'errors' => array("Invalid username/password"),
-            'username' => $username,
+            'email' => $email,
             'password' => $password
         )
     );

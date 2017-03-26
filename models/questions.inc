@@ -1,6 +1,7 @@
 <?php
 include_once 'models/model.inc';
 include_once 'models/users.inc';
+include_once 'models/validator.inc';
 
 class Question extends Model {
     private $title;
@@ -9,7 +10,7 @@ class Question extends Model {
     private $validator;
 
     //public function __construct($id, $description, $done = false) {
-    public function __construct($fields = array(), $validator){
+    public function __construct($fields = array(), $validator = null){
         parent::__construct($fields);
         $this -> setTitle(safeParam($fields, 'title'));
         $this -> setContent(safeParam($fields, 'content'));
@@ -17,18 +18,21 @@ class Question extends Model {
         $this -> setUserId(safeParam($fields, 'user_id'));
         $this -> setInsertTs(safeParam($fields, 'insert_ts'));
         if(!isset($validator)){
-          $validator = new Validator();
+          $this -> validator = new Validator();
+        }
+        else {
+          $this -> validator = $validator;
         }
     }
 
     public function validate($throw = false) {
-        $validator -> required('title', $this -> title, "Title is required");
-        $validator -> required('content', $this -> content, "Content is required");
-        $validator -> required('user_id', $this -> user_id, "User Id is required");
-        if ($throw && $validator -> hasErrors()) {
-            throw new IllegalStateException(implode(", ", $validator -> allErrors()));
+        $this -> validator -> required('title', $this -> title, "Title is required");
+        $this -> validator -> required('content', $this -> content, "Content is required");
+        $this -> validator -> required('user_id', $this -> user_id, "User Id is required");
+        if ($throw && $this -> validator -> hasErrors()) {
+            throw new IllegalStateException(implode(", ", $this -> validator -> allErrors()));
         }
-        return $validator;
+        return $this -> validator;
     }
 
     private function clean() {

@@ -1,26 +1,27 @@
+<?php  include_once 'include/util.inc'; ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
         <title><?php echo($title); ?></title>
         <link rel="stylesheet" href="/forum/static/style.css" />
-<style>
-  a.nav { float: right; margin: 3px;}
-</style>
     </head>
     <body>
         <div class="content">
-
-<?php  include_once 'include/util.inc'; ?>
+            <div class='header'>
+<ul id="navigation">
 <?php  if (isLoggedIn()) : ?>
-  Welcome, <?php echo(getName(current_user())); ?>
-    <a class='nav' href='/forum/logout'>Log Out</a>
-    <a class='nav' href="/forum/users/view/<?php echo(current_user()['user_id']); ?>">My Profile</a>
+  <li class="left">Welcome, <?php echo(getName(current_user())); ?></li>
+  <li class="right"><a href="/forum/logout">Log out</a></li>
+  <li class="right"><a href="/forum/user/view/<?php echo(current_user()); ?>">My profile</a></li>
 <?php  else : ?>
-    <a class='nav' href='/forum/login'>Log in</a>
-    <a class='nav' href='/forum/users/add'>Register</a>
+  <li class="right"><a href="/forum/login">Log in</a></li>
+  <li class="right"><a href="/forum/user/register">Register</a></li>
 <?php  endif; ?>
-    <a class='nav' href='/forum/index'>Home</a>
+  <li class="right"><a href="/forum/index">Home</a></li>
+</ul>
+            </div>
+            <div style='clear: both;'>
 
 <?php  if (isset($errors)) : ?>
     <p>Please correct the following errors:</p>
@@ -33,15 +34,16 @@
 <h1><?php echo($title); ?></h1>
 <div class='inputs'>
     <form action="/forum/users/update" method="post">
-        <input type="hidden" id="user_id" name="user_id" value="<?php echo($user['user_id']); ?>" />
+        <input type="hidden" id="id" name="id" value="<?php echo($user -> getId()); ?>" />
+        <input type="hidden" id="email" name="email" value="<?php echo($user -> getEmail()); ?>" />
         <label for="title">First Name:</label>
-        <input type="text" id="first_name" name="first_name" value="<?php echo($user['first_name']); ?>" />
+        <input type="text" id="first_name" name="first_name" value="<?php echo($user -> getFirstName()); ?>" />
         <label for="content">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" value="<?php echo($user['last_name']); ?>" />
-        <label for="content">Email:</label>
-        <input type="text" id="email" name="email" value="<?php echo($user['email']); ?>" />
+        <input type="text" id="last_name" name="last_name" value="<?php echo($user -> getLastName()); ?>" />
+        <span>Email:</span><br />
+        <span><?php echo($user -> getEmail()); ?></span>
         <label for="content">Password:</label>
-        <input type="password" id="password" name="password" value="<?php echo($user['password']); ?>" /><br><br>
+        <input type="password" id="password" name="password" value="<?php echo($user -> getPassword()); ?>" /><br><br>
         <input type="submit" value="Save" />
     <form>
 </div>
