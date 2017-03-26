@@ -7,12 +7,6 @@ define("REQUIRED_PARAMS", array('first_name', 'last_name', 'email', 'password'))
 
 
 
-function safeParam($arr, $index, $default) {
-    if ($arr && isset($arr[$index])) {
-        return $arr[$index];
-    }
-    return $default;
-}
 function requiredParamsPresent($params){
   $present = true;
   foreach(REQUIRED_PARAMS as $param){
@@ -30,16 +24,19 @@ function get_view($params) {
         die("No user id specified");
     }
     $authenticated = authenticateUser($id);
-    $user = findUserById($id);
+    $user = User::findById($id);
     if (!$user) {
         die("No user with id $id found.");
     }
-    $questions = findQuestionsByUserId($user['user_id']);
+
+    $first_name = $user -> getFirstName();
+    $last_name = $user -> getLastName();
+    $questions = Question::findQuestionsByUserId($user -> getId());
     // @formatter:off
     renderTemplate(
         "views/user_view.inc",
         array(
-            'title' => "$user[first_name]  $user[last_name]",
+            'title' => "$first_name $last_name",
             'user' => $user,
             'questions' => $questions,
             'auth' => $authenticated

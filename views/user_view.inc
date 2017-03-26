@@ -1,33 +1,33 @@
 %% views/header.html %%
 <h1>{{$title}}</h1>
 <div class='display'>
-  <p>First Name: {{$user['first_name']}}
-  <p>Last Name: {{$user['last_name']}}
-  <p>Email: {{$user['email']}}
-  <p>Password: {{preg_replace('/./','*',$user['password'])}}
+  <p>First Name: {{$user -> getFirstName()}}
+  <p>Last Name: {{$user -> getLastName()}}
+  <p>Email: {{$user -> getEmail()}}
+  <p>Password: {{preg_replace('/./','*',$user -> getPassword())}}
 </div>
         [[ if($auth): ]]
           <p>
-            <a href="@@users/delete/{{$user[user_id]}}@@">[Delete]</a>
-            <a href="@@users/edit/{{$user[user_id]}}@@">[Edit]</a>
+            <a href="@@users/delete/{{$user -> getId()}}@@">[Delete]</a>
+            <a href="@@users/edit/{{$user -> getId()}}@@">[Edit]</a>
           </p>
         [[ endif; ]]
   <br/>
-  <h2>Questions by {{getName($user)}}</h2>
+  <h2>Questions by {{getName($user -> getId())}}</h2>
   <ol>
       [[ foreach ($questions as $question) : ]]
       <li>
-          <a href="@@questions/view/{{$question['id']}}@@">{{$question['title']}}</a><br>
-          Posted on: {{substr($question['date'],0,10)}} by <a href="@@users/view/{{$question['user_id']@@}}">{{$user['first_name']}} {{$user['last_name']}}</a><br>
-          [[ if(isset($question['tags'])) : ]]
-            Filed Under: {{$question['tags']}}<br>
+          <a href="@@questions/view/{{$question -> getId()}}@@">{{$question -> getTitle()}}</a><br>
+          Posted on: {{substr($question -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$question -> getUserId()@@}}">{{$user -> getFirstName()}} {{$user -> getLastName()}}</a><br>
+          [[ if($question -> getTags() !== null) : ]]
+            Filed Under: {{$question -> getTags()}}<br>
           [[ endif; ]]
-            {{substr($question['content'], 0, 100) . '...'}}
+            {{substr($question -> getContent(), 0, 100) . '...'}}
       </li>
         [[ if($auth): ]]
           <p>
-            <a href="@@questions/delete/{{$question['id']}}@@">[Delete]</a>
-            <a href="@@questions/edit/{{$question['id']}}@@">[Edit]</a>
+            <a href="@@questions/delete/{{$question -> getId()}}@@">[Delete]</a>
+            <a href="@@questions/edit/{{$question -> getId()}}@@">[Edit]</a>
           </p>
         [[ endif; ]]
       [[ endforeach; ]]

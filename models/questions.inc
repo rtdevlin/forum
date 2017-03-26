@@ -84,7 +84,8 @@ class Question extends Model {
     }
 
     public function getUser(){
-      return User::findById($this -> user_id);
+      $user = User::findById($this -> user_id);
+      return $user;
     }
 
     static function findById($id) {
@@ -98,8 +99,8 @@ class Question extends Model {
 
     static function findQuestionsByUserId($user_id) {
         $db = Db::getDb();
-        $st = $db -> prepare('SELECT * FROM questions WHERE user_id = ? order by date desc limit 10');
-        $st -> bindParam(1, $user_id);
+        $st = $db -> prepare('SELECT * FROM questions WHERE user_id = :user_id order by insert_ts desc limit 10');
+        $st -> bindParam(':user_id', $user_id);
         $st -> execute();
         $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
         return self::fromRows($rows);

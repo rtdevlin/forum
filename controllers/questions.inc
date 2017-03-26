@@ -12,15 +12,14 @@ function get_view($params) {
     if (!$question) {
         die("No question with id $id found.");
     }
-    $authenticated = authenticateUser($question['user_id']);
+    $authenticated = authenticateUser($question -> getUserId());
     // @formatter:off
     renderTemplate(
         "views/question_view.inc",
         array(
-            'title' => $question['title'],
+            'title' => $question -> getTitle(),
             'question' => $question,
             'auth' => $authenticated,
-            'wtf' => $user_id
         )
     );
     // @formatter:on
@@ -50,7 +49,7 @@ function get_edit($params) {
     if (!$question) {
         die("No question found.");
     }
-    $authenticated = authenticateUser($question['user_id']);
+    $authenticated = authenticateUser($question -> getUserId());
     // @formatter:off
     if($authenticated){
       renderTemplate(
@@ -140,7 +139,7 @@ function get_delete($params) {
     if (!$question) {
         die("No question found.");
     }
-    $authenticated = authenticateUser($question['user_id']);
+    $authenticated = authenticateUser($question -> getUserId());
     if($authenticated){
       deleteQuestion($id);
     }

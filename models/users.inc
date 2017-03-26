@@ -76,7 +76,7 @@ class User extends Model {
 
     static function findById($id) {
         $db = Db::getDb();
-        $st = $db -> prepare('SELECT * FROM questions WHERE id = :id');
+        $st = $db -> prepare('SELECT * FROM users WHERE id = :id');
         $st -> bindParam(':id', $id);
         $st -> execute();
         $row = $st -> fetch(PDO::FETCH_ASSOC);
