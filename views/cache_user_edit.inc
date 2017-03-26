@@ -13,10 +13,10 @@
 <?php  if (isLoggedIn()) : ?>
   <li class="left">Welcome, <?php echo(getName(current_user())); ?></li>
   <li class="right"><a href="/forum/logout">Log out</a></li>
-  <li class="right"><a href="/forum/user/view/<?php echo(current_user()); ?>">My profile</a></li>
+  <li class="right"><a href="/forum/users/view/<?php echo(current_user()); ?>">My profile</a></li>
 <?php  else : ?>
   <li class="right"><a href="/forum/login">Log in</a></li>
-  <li class="right"><a href="/forum/user/register">Register</a></li>
+  <li class="right"><a href="/forum/users/add">Register</a></li>
 <?php  endif; ?>
   <li class="right"><a href="/forum/index">Home</a></li>
 </ul>

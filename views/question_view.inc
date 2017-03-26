@@ -2,8 +2,8 @@
 <h1>{{$title}}</h1>
 <div class='display'>
     <div class='value'>Posted on: {{$question -> getInsertTs()}} by <a href="@@users/view/{{$question -> getUserId()}}@@">{{$question -> getUser() -> getFirstName()}} {{$question -> getUser() ->  getLastName()}}</a></div><br>
-    [[ if($question -> getTags() !== null) : ]]
-      <div class='value'>Filed Under: {{$question -> getTags()}}</div><br>
+    [[ if($tags !== null) : ]]
+      <div class='value'>Filed Under: {{buildTagList($tags)}}</div><br>
     [[ endif; ]]
     <div class='value'>{{nl2br($question -> getContent())}}</div>
 </div>

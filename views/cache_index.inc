@@ -31,7 +31,7 @@
         <a href="/forum/questions/view/<?php echo($question -> getId()); ?>"><?php echo($question -> getTitle()); ?></a><br>
         Posted on: <?php echo(substr($question -> getInsertTs(),0,10)); ?> by <a href="/forum/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($question -> getUser() -> getFirstName()); ?> <?php echo($question -> getUser() -> getLastName()); ?></a><br>
         <?php  if($question -> getTags() !== null) : ?>
-        Filed Under: <?php echo($question -> getTags()); ?><br>
+        Filed Under: <?php echo(buildTagList($question -> getTags())); ?><br>
         <?php  endif; ?>
         <?php echo(substr($question -> getContent(), 0, 100) . '...'); ?>
     </li>

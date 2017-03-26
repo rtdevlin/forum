@@ -6,6 +6,38 @@ function safeParam($arr, $index, $default) {
     return $default;
 }
 
+function buildQuestionTagBridge($question, $tags_array){
+  foreach($tags_array as $tag){
+    $params = array(
+      'question_id' => $question -> getId(),
+      'tag_id' => $tag -> getId()
+    );
+    $question_tag = new QuestionTag($params);
+    $question_tag -> insert();
+  }
+}
+
+function insertTags($tags){
+  $rows = array();
+  foreach($tags as $tag){
+    $rows[] = Tag::findOrCreateByName(array('name' => $tag));
+  }
+  return $rows;
+}
+
+function splitTags($tag_list){
+  $tags = explode(' ', $tag_list);
+  return $tags;
+}
+
+function buildTagList($tags){
+  $links = array();
+  foreach($tags as $tag){
+    $links[] = "<a href=\"@@tags/list/{{$tag}}\">{{$tag}}</a>";
+  }
+  return implode(' ', $links);
+}
+
 function getName($id){
   $user = User::findById($id);
   $first_name = $user -> getFirstName();

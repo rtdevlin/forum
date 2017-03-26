@@ -26,8 +26,8 @@
 <h1><?php echo($title); ?></h1>
 <div class='display'>
     <div class='value'>Posted on: <?php echo($question -> getInsertTs()); ?> by <a href="/forum/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($question -> getUser() -> getFirstName()); ?> <?php echo($question -> getUser() ->  getLastName()); ?></a></div><br>
-    <?php  if($question -> getTags() !== null) : ?>
-      <div class='value'>Filed Under: <?php echo($question -> getTags()); ?></div><br>
+    <?php  if($tags !== null) : ?>
+      <div class='value'>Filed Under: <?php echo(buildTagList($tags)); ?></div><br>
     <?php  endif; ?>
     <div class='value'><?php echo(nl2br($question -> getContent())); ?></div>
 </div>

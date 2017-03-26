@@ -1,12 +1,13 @@
 <?php
 include_once 'models/model.inc';
 include_once 'models/users.inc';
+include_once 'models/question_tags.inc';
+include_once 'models/tags.inc';
 include_once 'models/validator.inc';
 
 class Question extends Model {
     private $title;
     private $content;
-    private $tags;
     private $validator;
 
     //public function __construct($id, $description, $done = false) {
@@ -14,7 +15,6 @@ class Question extends Model {
         parent::__construct($fields);
         $this -> setTitle(safeParam($fields, 'title'));
         $this -> setContent(safeParam($fields, 'content'));
-        $this -> setTags(safeParam($fields, 'tags'));
         $this -> setUserId(safeParam($fields, 'user_id'));
         $this -> setInsertTs(safeParam($fields, 'insert_ts'));
         if(!isset($validator)){
@@ -38,7 +38,6 @@ class Question extends Model {
     private function clean() {
         $this -> title = htmlentities($this -> title, ENT_QUOTES);
         $this -> content = htmlentities($this -> content, ENT_QUOTES);
-        $this -> tags = htmlentities($this -> tags, ENT_QUOTES);
         $this -> user_id = htmlentities($this -> user_id, ENT_QUOTES);
     }
 
@@ -70,7 +69,35 @@ class Question extends Model {
     }
 
     public function getTags() {
-        return $this -> tags;
+      $bridge_rows = QuestionTag::findByQuestionId($this -> getId());
+      $tags = array();
+      if(!$bridge_rows){
+        foreach($bridge_rows as $row){
+          $tag_name = Tags::findById($row -> getTagId() -> getName());
+          $tags[] = $tag_name;
+        }
+      }
+      $this -> tags = implode(' ', $tags);
+      return $this -> tags;
+    }
+
+    public function setTags($tags) {
+      $parsed_tags = explode(' ', $tags);
+      foreach($parsed_tags as $tag){
+        $tag_row = Tag::findByName($tag);
+        if(!$tag_row){
+          $new_tag = new Tag($tag);
+          $new_tag -> insert();
+          $question_tag = new QuestionTag($this -> getId(), $new_tag -> getId());
+          $question_tag -> insert();
+        }
+        else {
+          $question_tag = new QuestionTag($this -> getId(), $tag_row -> getId());
+          $question_tag -> insert();
+        }
+      }
+        $this -> tags = getTags();
+        return $this;
     }
 
     public function getInsertTs() {
@@ -82,10 +109,6 @@ class Question extends Model {
         return $this;
     }
 
-    public function setTags($tags) {
-        $this -> tags = $tags;
-        return $this;
-    }
 
     public function getUser(){
       $user = User::findById($this -> user_id);
@@ -95,6 +118,15 @@ class Question extends Model {
     static function findById($id) {
         $db = Db::getDb();
         $st = $db -> prepare('SELECT * FROM questions WHERE id = :id');
+        $st -> bindParam(':id', $id);
+        $st -> execute();
+        $row = $st -> fetch(PDO::FETCH_ASSOC);
+        return new self($row);
+    }
+
+    static function findByTag($tag) {
+        $db = Db::getDb();
+        $st = $db -> prepare('SELECT * FROM questions WHERE tags like :id');
         $st -> bindParam(':id', $id);
         $st -> execute();
         $row = $st -> fetch(PDO::FETCH_ASSOC);
@@ -122,10 +154,9 @@ class Question extends Model {
         $this -> validate(true);
         $this -> clean();
         $db = Db::getDb();
-        $statement = $db -> prepare("INSERT INTO questions (title, content, tags, user_id) values (:title, :content, :tags, :user_id)");
+        $statement = $db -> prepare("INSERT INTO questions (title, content, user_id) values (:title, :content, :user_id)");
         $statement -> bindParam(':title', $this -> title);
         $statement -> bindParam(':content', $this -> content);
-        $statement -> bindParam(':tags', $this -> tags);
         $statement -> bindParam(':user_id', $this -> user_id);
         $statement -> execute();
         $this -> id = $db -> lastInsertId();
@@ -136,10 +167,9 @@ class Question extends Model {
         $this -> validate(true);
         $this -> clean();
         $db = Db::getDb();
-        $statement = $db -> prepare("UPDATE questions SET title = :title, content = :content, tags = :tags WHERE id = :id");
+        $statement = $db -> prepare("UPDATE questions SET title = :title, content = :content, WHERE id = :id");
         $statement -> bindParam(':title', $this -> title);
         $statement -> bindParam(':content', $this -> content);
-        $statement -> bindParam(':tags', $this -> tags);
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
         return $this;

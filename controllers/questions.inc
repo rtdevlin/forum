@@ -1,6 +1,8 @@
 <?php
 include_once "include/util.inc";
 include_once "models/questions.inc";
+include_once "models/tags.inc";
+include_once "models/question_tags.inc";
 
 
 function get_view($params) {
@@ -9,6 +11,7 @@ function get_view($params) {
         die("No question id specified");
     }
     $question = Question::findById($id);
+    $tags = $question -> getTags();
     if (!$question) {
         die("No question with id $id found.");
     }
@@ -19,6 +22,7 @@ function get_view($params) {
         array(
             'title' => $question -> getTitle(),
             'question' => $question,
+            'tags' => $tags,
             'auth' => $authenticated,
         )
     );
@@ -82,6 +86,7 @@ function get_add($params) {
 function post_add($params) {
   ensureLoggedIn();
   $question = new Question($params);
+  $split_tags = splitTags($params['tags']);
   $validator = $question -> validate();
   if($validator -> hasErrors()){
     renderTemplate(
@@ -95,6 +100,8 @@ function post_add($params) {
   }
   else {
     $question -> insert();
+    $tags = insertTags($split_tags);
+    buildQuestionTagBridge($question, $tags);
     redirectRelative("index");
   }
 }
