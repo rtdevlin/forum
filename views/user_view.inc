@@ -20,7 +20,7 @@
           <a href="@@questions/view/{{$question -> getId()}}@@">{{$question -> getTitle()}}</a><br>
           Posted on: {{substr($question -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$question -> getUserId()@@}}">{{$user -> getFirstName()}} {{$user -> getLastName()}}</a><br>
           [[ if($question -> getTags() !== null) : ]]
-            Filed Under: {{$question -> getTags()}}<br>
+            Filed Under: {{buildTagList($question -> getTags())}}<br>
           [[ endif; ]]
             {{substr($question -> getContent(), 0, 100) . '...'}}
       </li>
