@@ -30,7 +30,7 @@ class Question extends Model {
         $this -> validator -> required('content', $this -> content, "Content is required");
         $this -> validator -> required('user_id', $this -> user_id, "User Id is required");
         if ($throw && $this -> validator -> hasErrors()) {
-            throw new IllegalStateException(implode(", ", $this -> validator -> allErrors()));
+            throw new Exception(implode(", ", $this -> validator -> allErrors()));
         }
         return $this -> validator;
     }

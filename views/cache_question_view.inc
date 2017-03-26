@@ -37,6 +37,30 @@
             <a href="/forum/questions/edit/<?php echo($question -> getId()); ?>">[Edit]</a>
           </p>
         <?php  endif; ?>
+<?php  if (isLoggedIn()) : ?>
+  <form action="/forum/answers/add" method="post">
+      <input type="hidden" id="user_id" name="user_id" value="<?php echo(current_user()); ?>" />
+      <input type="hidden" id="question_id" name="question_id" value="<?php echo($question->getId()); ?>" />
+      <label for="content">Add an asnwer</label><br>
+      <textarea name="content" rows='5' cols='60'></textarea><br>
+      <input type="submit" value="Submit" /><br>
+  </form>
+<?php  endif; ?>
+<br/>
+<h2>Answers</h2>
+<ol>
+    <?php  foreach ($answers as $answer) : ?>
+    <li>
+        Posted on: <?php echo(substr($answer -> getInsertTs(),0,10)); ?> by <a href="/forum/users/view/<?php echo($answer -> getUserId()); ?>"><?php echo($answer -> getUser() -> getFirstName()); ?> <?php echo($answer -> getUser() -> getLastName()); ?></a><br>
+        <?php echo($answer -> getContent()); ?>
+        <?php  if($answer->auth()) : ?>
+          <p>
+            <a href="/forum/questions/delete/<?php echo($answer -> getId()); ?>">[Delete]</a>
+          </p>
+        <?php  endif; ?>
+    </li>
+    <?php  endforeach; ?>
+</ol>
 <p><a href="/forum/index"><< Back</a></p>
         <div class="footer">
             Copyright &copy; 2017 Ryan Devlin

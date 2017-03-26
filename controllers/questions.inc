@@ -2,6 +2,7 @@
 include_once "include/util.inc";
 include_once "models/questions.inc";
 include_once "models/tags.inc";
+include_once "models/answers.inc";
 include_once "models/question_tags.inc";
 
 
@@ -12,6 +13,7 @@ function get_view($params) {
     }
     $question = Question::findById($id);
     $tags = $question -> getTags();
+    $answers = Answer::findByQuestionId($id);
     if (!$question) {
         die("No question with id $id found.");
     }
@@ -23,6 +25,7 @@ function get_view($params) {
             'title' => $question -> getTitle(),
             'question' => $question,
             'tags' => $tags,
+            'answers' => $answers,
             'auth' => $authenticated,
         )
     );
