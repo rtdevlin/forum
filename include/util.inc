@@ -1,12 +1,18 @@
 <?php
-function getName($user){
-  if(isset($user)){
-    return "$user[first_name] $user[last_name]";
-  }
-  else {
-    return 'No User';
-  }
+function safeParam($arr, $index, $default) {
+    if ($arr && isset($arr[$index])) {
+        return $arr[$index];
+    }
+    return $default;
 }
+
+function getName($id){
+  $user = User::findById($id);
+  $first_name = $user -> getFirstName();
+  $last_name = $user -> getLastName();
+  return "$first_name $last_name";
+}
+
 function authenticateUser($id){
   return current_user()['user_id'] === $id;
 }
@@ -21,13 +27,7 @@ function validateChanges($params, $redirect_string, $opts = array()){
   }
 function loadUser($email) {
   $user = findUserByEmail($email);
-  $_SESSION['current_user'] = array();
-  foreach($user as $column => $attr){
-    if($column === 'password'){
-      continue;
-    }
-    $_SESSION['current_user'] = array_merge($_SESSION['current_user'], array($column => $attr));
-  }
+  $_SESSION['current_user'] = $user['user_id'];
 }
 function current_user(){
   return $_SESSION['current_user'];

@@ -2,33 +2,13 @@
 include_once "include/util.inc";
 include_once "models/questions.inc";
 
-define("REQUIRED_PARAMS", array('title', 'content'));
-
-
-
-function safeParam($arr, $index, $default) {
-    if ($arr && isset($arr[$index])) {
-        return $arr[$index];
-    }
-    return $default;
-}
-function requiredParamsPresent($params){
-  $present = true;
-  foreach(REQUIRED_PARAMS as $param){
-    $present = empty($params[$param]) ? false : true;
-    if(!$present){
-      return $present;
-    }
-  }
-  return $present;
-}
 
 function get_view($params) {
     $id = safeParam($params, 0, false);
     if ($id === false) {
         die("No question id specified");
     }
-    $question = findQuestionById($id);
+    $question = Question::findById($id);
     if (!$question) {
         die("No question with id $id found.");
     }
@@ -47,7 +27,7 @@ function get_view($params) {
 }
 
 function get_list($params) {
-    $questions = findLatestFiveQuestions();
+    $questions = Question::findLatestFiveQuestions();
     // @formatter:off
     renderTemplate(
         "views/index.inc",

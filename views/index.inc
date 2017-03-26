@@ -4,12 +4,12 @@
 <ol>
     [[ foreach ($questions as $question) : ]]
     <li>
-        <a href="@@questions/view/{{$question['id']}}@@">{{$question['title']}}</a><br>
-        Posted on: {{substr($question['date'],0,10)}} by <a href="@@users/view/{{$question['user_id']}}@@">{{$question['first_name']}} {{$question['last_name']}}</a><br>
-        [[ if(isset($question['tags'])) : ]]
-        Filed Under: {{$question['tags']}}<br>
+        <a href="@@questions/view/{{$question -> getId()}}@@">{{$question -> getTitle()}}</a><br>
+        Posted on: {{substr($question -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$question -> getUserId()}}@@">{{$question -> getUser() -> getFirstName()}} {{$question -> getUser() -> getLastName()}}</a><br>
+        [[ if($question -> getTags() !== null) : ]]
+        Filed Under: {{$question -> getTags()}}<br>
         [[ endif; ]]
-        {{substr($question['content'], 0, 100) . '...'}}
+        {{substr($question -> getContent(), 0, 100) . '...'}}
     </li>
     [[ endforeach; ]]
 </ol>
