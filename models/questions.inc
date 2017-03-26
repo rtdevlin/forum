@@ -118,11 +118,20 @@ class Question extends Model {
 
     static function findById($id) {
         $db = Db::getDb();
-        $st = $db -> prepare('SELECT * FROM questions WHERE id = :id');
+        $st = $db -> prepare("SELECT * FROM questions WHERE id = (:id)");
         $st -> bindParam(':id', $id);
         $st -> execute();
-        $row = $st -> fetch(PDO::FETCH_ASSOC);
-        return new self($row);
+        $rows = $st -> fetch(PDO::FETCH_ASSOC);
+        return new self($rows);
+    }
+
+    static function findByIds($ids) {
+        $db = Db::getDb();
+        $question_marks = implode(',', array_fill(1, count($ids), '?'));
+        $st = $db -> prepare("SELECT * FROM questions WHERE id in ($question_marks)");
+        $st -> execute($ids);
+        $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
+        return self::fromRows($rows);
     }
 
     static function findByTag($tag) {
@@ -130,8 +139,8 @@ class Question extends Model {
         $st = $db -> prepare('SELECT * FROM questions WHERE tags like :id');
         $st -> bindParam(':id', $id);
         $st -> execute();
-        $row = $st -> fetch(PDO::FETCH_ASSOC);
-        return new self($row);
+        $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
+        return new self($rows);
     }
 
     static function findQuestionsByUserId($user_id) {
