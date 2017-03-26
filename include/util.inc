@@ -32,8 +32,9 @@ function splitTags($tag_list){
 
 function buildTagList($tags){
   $links = array();
+  $tags = explode(' ', $tags);
   foreach($tags as $tag){
-    $links[] = "<a href=\"@@tags/list/{{$tag}}\">{{$tag}}</a>";
+    $links[] = "<a href='tags/list/$tag'>$tag</a>";
   }
   return implode(' ', $links);
 }

@@ -59,8 +59,8 @@ class QuestionTag extends Model {
         $st = $db -> prepare('SELECT * FROM question_tags WHERE question_id = :question_id');
         $st -> bindParam(':question_id', $question_id);
         $st -> execute();
-        $row = $st -> fetch(PDO::FETCH_ASSOC);
-        return new self($row);
+        $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
+        return self::fromRows($rows);
     }
 
     static function findByTagId($tag_id) {
@@ -68,8 +68,8 @@ class QuestionTag extends Model {
         $st = $db -> prepare('SELECT * FROM question_tags WHERE tag_id = :tag_id');
         $st -> bindParam(':tag_id', $tag_id);
         $st -> execute();
-        $row = $st -> fetch(PDO::FETCH_ASSOC);
-        return new self($row);
+        $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
+        return self::fromRows($rows);
     }
 
 

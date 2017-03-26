@@ -71,9 +71,10 @@ class Question extends Model {
     public function getTags() {
       $bridge_rows = QuestionTag::findByQuestionId($this -> getId());
       $tags = array();
-      if(!$bridge_rows){
+      if($bridge_rows){
         foreach($bridge_rows as $row){
-          $tag_name = Tags::findById($row -> getTagId() -> getName());
+          $tag = Tag::findById($row -> getTagId());
+          $tag_name = $tag -> getName();
           $tags[] = $tag_name;
         }
       }
@@ -85,14 +86,14 @@ class Question extends Model {
       $parsed_tags = explode(' ', $tags);
       foreach($parsed_tags as $tag){
         $tag_row = Tag::findByName($tag);
-        if(!$tag_row){
-          $new_tag = new Tag($tag);
-          $new_tag -> insert();
-          $question_tag = new QuestionTag($this -> getId(), $new_tag -> getId());
+        if($tag_row -> getId()){
+          $question_tag = new QuestionTag($this -> getId(), $tag_row -> getId());
           $question_tag -> insert();
         }
         else {
-          $question_tag = new QuestionTag($this -> getId(), $tag_row -> getId());
+          $new_tag = new Tag($tag);
+          $new_tag -> insert();
+          $question_tag = new QuestionTag($this -> getId(), $new_tag -> getId());
           $question_tag -> insert();
         }
       }
