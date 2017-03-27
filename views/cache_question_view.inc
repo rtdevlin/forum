@@ -55,7 +55,7 @@
         <?php echo($answer -> getContent()); ?>
         <?php  if($answer->auth()) : ?>
           <p>
-            <a href="/forum/questions/delete/<?php echo($answer -> getId()); ?>">[Delete]</a>
+            <a href="/forum/answers/delete/<?php echo($answer -> getId()); ?>">[Delete]</a>
           </p>
         <?php  endif; ?>
     </li>

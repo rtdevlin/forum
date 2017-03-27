@@ -150,13 +150,15 @@ function get_delete($params) {
     if (!$id) {
         die("No question specified");
     }
-    $question = findQuestionById($id);
+    $question = Question::findById($id);
     if (!$question) {
         die("No question found.");
     }
     $authenticated = authenticateUser($question -> getUserId());
     if($authenticated){
-      deleteQuestion($id);
+      resetTags($question->getId());
+      Answer::deleteByQuestionId($question->getId());
+      $question -> delete();
     }
     redirectRelative("index");
 }

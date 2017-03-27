@@ -1,7 +1,9 @@
 <?php
 include_once "include/util.inc";
 include_once "models/users.inc";
+include_once "models/answers.inc";
 include_once "models/questions.inc";
+include_once "models/question_tags.inc";
 
 define("REQUIRED_PARAMS", array('first_name', 'last_name', 'email', 'password'));
 
@@ -162,14 +164,22 @@ function get_delete($params) {
     if (!$id) {
         die("No user specified");
     }
-    $user = findUserById($id);
+    $user = User::findById($id);
     if (!$user) {
         die("No user found.");
     }
     $authenticated = authenticateUser($id);
     if($authenticated){
-      deleteUser($id);
+      Answer::deleteByUserId($user->getId());
+      $questions = Question::findQuestionsByUserId($user->getId());
+      foreach($questions as $question){
+        resetTags($question->getId());
+      }
+      Question::deleteByUserId($user->getId());
+      $user -> delete();
     }
+    $_SESSION = array();
+    session_destroy();
     redirectRelative("index");
 }
 ?>

@@ -19,5 +19,22 @@ function post_add($params) {
     redirectRelative("questions/view/$question_id");
   }
 }
+
+function get_delete($params) {
+  ensureLoggedIn();
+    $id = safeParam($params, 0, false);
+    if (!$id) {
+        die("No answer specified");
+    }
+    $answer = Answer::findById($id);
+    if (!$answer) {
+        die("No answer found.");
+    }
+    $authenticated = $answer -> auth();
+    if($authenticated){
+      $answer -> delete();
+    }
+    redirectRelative("index");
+}
 ?>
 

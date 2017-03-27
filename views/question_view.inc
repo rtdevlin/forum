@@ -31,7 +31,7 @@
         {{$answer -> getContent()}}
         [[ if($answer->auth()) : ]]
           <p>
-            <a href="@@questions/delete/{{$answer -> getId()}}@@">[Delete]</a>
+            <a href="@@answers/delete/{{$answer -> getId()}}@@">[Delete]</a>
           </p>
         [[ endif; ]]
     </li>

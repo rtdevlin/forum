@@ -191,5 +191,12 @@ class Question extends Model {
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
     }
+
+    function deleteByUserId($user_id){
+        $db = Db::getDb();
+        $statement = $db -> prepare("DELETE FROM questions WHERE user_id = :id");
+        $statement -> bindParam(':id', $user_id);
+        $statement -> execute();
+    }
 }
 ?>
