@@ -5,7 +5,7 @@
     [[ if($tags !== null) : ]]
       <div class='value'>Filed Under: {{buildTagList($tags)}}</div><br>
     [[ endif; ]]
-    <div class='value'>{{nl2br($question -> getContent())}}</div>
+    <div class='value'>{{formatAsMarkdown($question -> getContent())}}</div>
 </div>
         [[ if($auth): ]]
           <p>

@@ -25,20 +25,22 @@
 
 <h1><?php echo($title); ?></h1>
 <h2>Recent Questions</h2>
-<ol>
     <?php  foreach ($questions as $question) : ?>
-    <li>
-        <a href="/forum/questions/view/<?php echo($question -> getId()); ?>"><?php echo($question -> getTitle()); ?></a><br>
-        Posted on: <?php echo(substr($question -> getInsertTs(),0,10)); ?> by <a href="/forum/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($question -> getUser() -> getFirstName()); ?> <?php echo($question -> getUser() -> getLastName()); ?></a><br>
+    <div class='shortquestion'>
+        <span class='title'><a href="/forum/questions/view/<?php echo($question -> getId()); ?>"><?php echo($question -> getTitle()); ?></a></span>
+        <span class='date'>Posted on: <?php echo(substr($question -> getInsertTs(),0,10)); ?> by <a href="/forum/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($question -> getUser() -> getFirstName()); ?> <?php echo($question -> getUser() -> getLastName()); ?></a></span>
         <?php  if($question -> getTags() !== null) : ?>
-        Filed Under: <?php echo(buildTagList($question -> getTags())); ?><br>
+        <span class='tags'>Filed Under: <?php echo(buildTagList($question -> getTags())); ?></span>
         <?php  endif; ?>
-        <?php echo(substr($question -> getContent(), 0, 100) . '...'); ?>
-    </li>
+        <?php  if(strlen($question -> getContent()) > 100) : ?>
+          <span class='question'><?php echo( formatAsMarkdown(substr($question -> getContent(), 0, 100)."..."))?></span>
+        <?php  else : ?>
+          <span class='question'><?php echo( formatAsMarkdown($question -> getContent()) )?></span>
+        <?php  endif; ?>
+    </div>
     <?php  endforeach; ?>
-</ol>
 <?php  if (isLoggedIn()) : ?>
-  <a href="/forum/questions/add">Add a question</a><br><br>
+  <a href="/forum/questions/add">Add a question</a>
 <?php  endif; ?>
 
         <div class="footer">

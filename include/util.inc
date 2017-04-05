@@ -1,4 +1,17 @@
 <?php
+function formatAsMarkdown($str) {
+    $str = htmlspecialchars(ltrim($str),ENT_QUOTES);
+    $str = preg_replace('/\*\*(.+)\*\*/u', '<b>$1</b>', $str);
+    $str = preg_replace('/\*([^\*]+)\*/u', '<i>$1</i>', $str);
+    $str = preg_replace('/#### ([^\n]*)\n/', "<h4>$1</h4>\n", $str);
+    $str = preg_replace('/### ([^\n]*)\n/', "<h3>$1</h3>\n", $str);
+    $str = preg_replace('/## ([^\n]*)\n/', "<h2>$1</h2>\n", $str);
+    $str = preg_replace('/# ([^\n]*)\n/', "<h1>$1</h1>\n", $str);
+    $str = preg_replace('/\[([^\]]+)\]\(([^\)]+)\)/', '<a href=\'$2\'>$1</a>', $str);
+    $str = preg_replace('/([^\n\r]{2,})(?:(\r\n){2,}|\r{2,}|\n{2,}|$)/u', "<p>$1</p>\n\n", $str);
+    return $str;
+}
+
 function safeParam($arr, $index, $default) {
     if ($arr && isset($arr[$index])) {
         return $arr[$index];
