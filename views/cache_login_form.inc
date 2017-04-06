@@ -4,7 +4,7 @@
 <html>
     <head>
         <title><?php echo($title); ?></title>
-        <link rel="stylesheet" href="/forum/static/style.css" />
+        <link rel="stylesheet" href="/static/style.css" />
     </head>
     <body>
         <div class="content">
@@ -12,13 +12,13 @@
 <ul id="navigation">
 <?php  if (isLoggedIn()) : ?>
   <li class="left">Welcome, <?php echo(getName(current_user())); ?></li>
-  <li class="right"><a href="/forum/logout">Log out</a></li>
-  <li class="right"><a href="/forum/users/view/<?php echo(current_user()); ?>">My profile</a></li>
+  <li class="right"><a href="/logout">Log out</a></li>
+  <li class="right"><a href="/users/view/<?php echo(current_user()); ?>">My profile</a></li>
 <?php  else : ?>
-  <li class="right"><a href="/forum/login">Log in</a></li>
-  <li class="right"><a href="/forum/users/add">Register</a></li>
+  <li class="right"><a href="/login">Log in</a></li>
+  <li class="right"><a href="/users/add">Register</a></li>
 <?php  endif; ?>
-  <li class="right"><a href="/forum/index">Home</a></li>
+  <li class="right"><a href="/index">Home</a></li>
 </ul>
             </div>
             <div style='clear: both;'>
@@ -33,7 +33,7 @@
     </ul>
 <?php  endif; ?>
 <div class='inputs'>
-    <form action="/forum/login" method="post">
+    <form action="/login" method="post">
         <label for="email">Email:</label>
         <input type="text" id="email" name="email" value="<?php echo(isset($email) ? $email : ''); ?>" />
         <label for="password">Password:</label>
@@ -41,7 +41,7 @@
         <input type="submit" value="Login" />
     <form>
 </div>
-<p><a href="/forum/index"><< Back</a></p>
+<p><a href="/index"><< Back</a></p>
         <div class="footer">
             Copyright &copy; 2017 Ryan Devlin
         </div>

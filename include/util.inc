@@ -44,7 +44,7 @@ function insertTags($tags){
 
 function splitTags($tag_list){
   $tags = explode(' ', $tag_list);
-  return $tags;
+  return array_filter($tags);
 }
 
 function buildTagList($tags){

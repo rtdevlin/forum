@@ -4,7 +4,7 @@
 <html>
     <head>
         <title><?php echo($title); ?></title>
-        <link rel="stylesheet" href="/forum/static/style.css" />
+        <link rel="stylesheet" href="/static/style.css" />
     </head>
     <body>
         <div class="content">
@@ -12,13 +12,13 @@
 <ul id="navigation">
 <?php  if (isLoggedIn()) : ?>
   <li class="left">Welcome, <?php echo(getName(current_user())); ?></li>
-  <li class="right"><a href="/forum/logout">Log out</a></li>
-  <li class="right"><a href="/forum/users/view/<?php echo(current_user()); ?>">My profile</a></li>
+  <li class="right"><a href="/logout">Log out</a></li>
+  <li class="right"><a href="/users/view/<?php echo(current_user()); ?>">My profile</a></li>
 <?php  else : ?>
-  <li class="right"><a href="/forum/login">Log in</a></li>
-  <li class="right"><a href="/forum/users/add">Register</a></li>
+  <li class="right"><a href="/login">Log in</a></li>
+  <li class="right"><a href="/users/add">Register</a></li>
 <?php  endif; ?>
-  <li class="right"><a href="/forum/index">Home</a></li>
+  <li class="right"><a href="/index">Home</a></li>
 </ul>
             </div>
             <div style='clear: both;'>
@@ -32,30 +32,32 @@
 </div>
         <?php  if($auth): ?>
           <p>
-            <a href="/forum/users/delete/<?php echo($user -> getId()); ?>">[Delete]</a>
-            <a href="/forum/users/edit/<?php echo($user -> getId()); ?>">[Edit]</a>
+            <a href="/users/delete/<?php echo($user -> getId()); ?>">[Delete]</a>
+            <a href="/users/edit/<?php echo($user -> getId()); ?>">[Edit]</a>
           </p>
         <?php  endif; ?>
   <br/>
   <h2>Questions by <?php echo(getName($user -> getId())); ?></h2>
-  <ol>
-      <?php  foreach ($questions as $question) : ?>
-      <li>
-          <a href="/forum/questions/view/<?php echo($question -> getId()); ?>"><?php echo($question -> getTitle()); ?></a><br>
-          Posted on: <?php echo(substr($question -> getInsertTs(),0,10)); ?> by <a href="/forum/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($user -> getFirstName()); ?> <?php echo($user -> getLastName()); ?></a><br>
-          <?php  if($question -> getTags() !== null) : ?>
-            Filed Under: <?php echo(buildTagList($question -> getTags())); ?><br>
-          <?php  endif; ?>
-            <?php echo(substr($question -> getContent(), 0, 100) . '...'); ?>
-      </li>
+    <?php  foreach ($questions as $question) : ?>
+    <div class='shortquestion'>
+        <span class='title'><a href="/questions/view/<?php echo($question -> getId()); ?>"><?php echo($question -> getTitle()); ?></a></span>
+        <span class='date'>Posted on: <?php echo(substr($question -> getInsertTs(),0,10)); ?> by <a href="/users/view/<?php echo($question -> getUserId()); ?>"><?php echo($question -> getUser() -> getFirstName()); ?> <?php echo($question -> getUser() -> getLastName()); ?></a></span>
+        <?php  if($question -> getTags() !== null) : ?>
+        <span class='tags'>Filed Under: <?php echo(buildTagList($question -> getTags())); ?></span>
+        <?php  endif; ?>
+        <?php  if(strlen($question -> getContent()) > 100) : ?>
+          <span class='question'><?php echo( formatAsMarkdown(substr($question -> getContent(), 0, 100)."..."))?></span>
+        <?php  else : ?>
+          <span class='question'><?php echo( formatAsMarkdown($question -> getContent()) )?></span>
+        <?php  endif; ?>
         <?php  if($auth): ?>
           <p>
-            <a href="/forum/questions/delete/<?php echo($question -> getId()); ?>">[Delete]</a>
-            <a href="/forum/questions/edit/<?php echo($question -> getId()); ?>">[Edit]</a>
+            <a href="/questions/delete/<?php echo($question -> getId()); ?>">[Delete]</a>
+            <a href="/questions/edit/<?php echo($question -> getId()); ?>">[Edit]</a>
           </p>
         <?php  endif; ?>
-      <?php  endforeach; ?>
-  </ol>
+    </div>
+    <?php  endforeach; ?>
         <div class="footer">
             Copyright &copy; 2017 Ryan Devlin
         </div>

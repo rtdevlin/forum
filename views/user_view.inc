@@ -14,22 +14,24 @@
         [[ endif; ]]
   <br/>
   <h2>Questions by {{getName($user -> getId())}}</h2>
-  <ol>
-      [[ foreach ($questions as $question) : ]]
-      <li>
-          <a href="@@questions/view/{{$question -> getId()}}@@">{{$question -> getTitle()}}</a><br>
-          Posted on: {{substr($question -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$question -> getUserId()@@}}">{{$user -> getFirstName()}} {{$user -> getLastName()}}</a><br>
-          [[ if($question -> getTags() !== null) : ]]
-            Filed Under: {{buildTagList($question -> getTags())}}<br>
-          [[ endif; ]]
-            {{substr($question -> getContent(), 0, 100) . '...'}}
-      </li>
+    [[ foreach ($questions as $question) : ]]
+    <div class='shortquestion'>
+        <span class='title'><a href="@@questions/view/{{$question -> getId()}}@@">{{$question -> getTitle()}}</a></span>
+        <span class='date'>Posted on: {{substr($question -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$question -> getUserId()}}@@">{{$question -> getUser() -> getFirstName()}} {{$question -> getUser() -> getLastName()}}</a></span>
+        [[ if($question -> getTags() !== null) : ]]
+        <span class='tags'>Filed Under: {{buildTagList($question -> getTags())}}</span>
+        [[ endif; ]]
+        [[ if(strlen($question -> getContent()) > 100) : ]]
+          <span class='question'>[[echo( formatAsMarkdown(substr($question -> getContent(), 0, 100)."..."))]]</span>
+        [[ else : ]]
+          <span class='question'>[[echo( formatAsMarkdown($question -> getContent()) )]]</span>
+        [[ endif; ]]
         [[ if($auth): ]]
           <p>
             <a href="@@questions/delete/{{$question -> getId()}}@@">[Delete]</a>
             <a href="@@questions/edit/{{$question -> getId()}}@@">[Edit]</a>
           </p>
         [[ endif; ]]
-      [[ endforeach; ]]
-  </ol>
+    </div>
+    [[ endforeach; ]]
 %% views/footer.html %%
