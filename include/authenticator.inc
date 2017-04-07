@@ -12,13 +12,13 @@ class Authenticator {
     const PERMS_QUERY =
         "SELECT DISTINCT permissions.id as id, permissions.name as name
          FROM
-            users, usergroups, groups, grouppermissions, permissions
+            users, user_groups, groups, group_permissions, permissions
          WHERE
             users.id = :userId AND
-            users.id = usergroups.userId AND
-            usergroups.groupId = groups.id AND
-            groups.id = grouppermissions.groupId AND
-            grouppermissions.permissionId = permissions.id";
+            users.id = user_groups.user_id AND
+            user_groups.group_id = groups.id AND
+            groups.id = group_permissions.group_id AND
+            group_permissions.permission_id = permissions.id";
     // @formatter:on
 
     private function __construct() {
@@ -39,7 +39,7 @@ class Authenticator {
         if (gettype($userId) == 'object') {
             return $userId -> getId();
         }
-        return currentUser();
+        return current_user();
     }
 
     public function can($permissionKey, $userId = false) {

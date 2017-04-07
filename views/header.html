@@ -1,4 +1,7 @@
-[[ include_once 'include/util.inc'; ]]
+[[
+include_once 'include/util.inc';
+include_once 'include/authenticator.inc';
+]]
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -13,6 +16,9 @@
 [[ if (isLoggedIn()) : ]]
   <li class="left">Welcome, {{getName(current_user())}}</li>
   <li class="right"><a href="@@logout@@">Log out</a></li>
+  [[ if (Authenticator::instance()->can('admin_page')) : ]]
+    <li class="right"><a href="@@admin@@">Admin</a></p>
+  [[ endif; ]]
   <li class="right"><a href="@@users/view/{{current_user()}}@@">My profile</a></li>
 [[ else : ]]
   <li class="right"><a href="@@login@@">Log in</a></li>
