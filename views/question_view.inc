@@ -7,9 +7,13 @@
     [[ endif; ]]
     <div class='value'>{{formatAsMarkdown($question -> getContent())}}</div>
 </div>
-        [[ if($auth): ]]
+        [[ if($auth || Authenticator::instance() -> can('delete_question')): ]]
           <p>
             <a href="@@questions/delete/{{$question -> getId()}}@@">[Delete]</a>
+          </p>
+        [[ endif; ]]
+        [[ if($auth || Authenticator::instance() -> can('edit_question')): ]]
+          <p>
             <a href="@@questions/edit/{{$question -> getId()}}@@">[Edit]</a>
           </p>
         [[ endif; ]]
