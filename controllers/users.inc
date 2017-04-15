@@ -1,7 +1,9 @@
 <?php
 include_once "include/util.inc";
+include_once "include/authenticator.inc";
 include_once "models/users.inc";
 include_once "models/answers.inc";
+include_once "models/group.inc";
 include_once "models/questions.inc";
 include_once "models/question_tags.inc";
 
@@ -18,6 +20,21 @@ function requiredParamsPresent($params){
     }
   }
   return $present;
+}
+
+function get_manage($params) {
+    Authenticator::instance() -> ensure('admin_page');
+
+    $users = User::findAll();
+    // @formatter:off
+    renderTemplate(
+        "views/user_list.inc",
+        array(
+            "title" => "Manage users",
+            "users" => $users
+        )
+    );
+    // @formatter:on
 }
 
 function get_view($params) {
@@ -181,5 +198,27 @@ function get_delete($params) {
     $_SESSION = array();
     session_destroy();
     redirectRelative("index");
+}
+
+function get_groups($params) {
+    $id = safeParam($params, 0, false);
+    if ($id === false) {
+        die("No user id specified");
+    }
+    $user = User::findById($id);
+    if (!$user) {
+        die("No user with id $id found.");
+    }
+    $memberOf = Group::findByUserId($id);
+    $notMemberOf = Group::findByNotUserId($id);
+    renderTemplate(
+        "views/user_groups.inc",
+        array(
+            "title" => "{$user->getFullName()}'s Groups",
+            "memberOf" => $memberOf,
+            "notMemberOf" => $notMemberOf,
+            "user" => $user
+        )
+    );
 }
 ?>

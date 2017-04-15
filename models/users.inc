@@ -59,6 +59,10 @@ class User extends Model {
         return $this;
     }
 
+    public function getFullName() {
+        return $this -> first_name . ' ' . $this -> last_name;
+    }
+
     public function getEmail() {
         return $this -> email;
     }
@@ -75,6 +79,14 @@ class User extends Model {
     public function setPassword($password) {
         $this -> password = $password;
         return $this;
+    }
+
+    static function findAll() {
+        $db = Db::getDb();
+        $st = $db -> prepare('SELECT * FROM users');
+        $st -> execute();
+        $rows = $st -> fetchAll(PDO::FETCH_ASSOC);
+        return self::fromRows($rows);
     }
 
     static function findById($id) {

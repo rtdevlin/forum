@@ -1,6 +1,6 @@
 <?php
 include_once 'models/model.inc';
-include_once 'models/user.inc';
+include_once 'models/users.inc';
 include_once 'models/permission.inc';
 include_once 'models/validator.inc';
 
@@ -93,7 +93,7 @@ class Group extends Model {
 
     public static function findByUserId($userId) {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT * FROM groups where groups.id in (SELECT groups.id from groups, usergroups WHERE groups.id = usergroups.groupId AND usergroups.userId = :userId) order by name");
+        $statement = $db -> prepare("SELECT * FROM groups where groups.id in (SELECT groups.id from groups, user_groups WHERE groups.id = user_groups.group_id AND user_groups.user_id = :userId) order by name");
         $statement -> bindParam(':userId', $userId);
         $statement -> execute();
         return self::fromRows($statement->fetchAll(PDO::FETCH_ASSOC));
@@ -101,7 +101,7 @@ class Group extends Model {
 
     public static function findByNotUserId($userId) {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT * FROM groups where groups.id not in (SELECT groups.id from groups, usergroups WHERE groups.id = usergroups.groupId AND usergroups.userId = :userId) order by name");
+        $statement = $db -> prepare("SELECT * FROM groups where groups.id not in (SELECT groups.id from groups, user_groups WHERE groups.id = user_groups.group_id AND user_groups.user_id = :userId) order by name");
         $statement -> bindParam(':userId', $userId);
         $statement -> execute();
         return self::fromRows($statement->fetchAll(PDO::FETCH_ASSOC));
@@ -109,7 +109,7 @@ class Group extends Model {
 
     public function addUser($user) {
         $db = Db::getDb();
-        $statement = $db -> prepare("INSERT INTO usergroups (groupId, userId) VALUES (:groupId, :userId)");
+        $statement = $db -> prepare("INSERT INTO user_groups (group_id, user_id) VALUES (:groupId, :userId)");
         $statement -> bindValue(':groupId', $this -> getId());
         $statement -> bindValue(':userId', $user -> getId());
         $statement -> execute();
@@ -117,7 +117,7 @@ class Group extends Model {
 
     public function removeUser($user) {
         $db = Db::getDb();
-        $statement = $db -> prepare("DELETE FROM usergroups WHERE groupId = :groupId AND userId = :userId");
+        $statement = $db -> prepare("DELETE FROM user_groups WHERE group_id = :groupId AND user_id = :userId");
         $statement -> bindValue(':groupId', $this -> getId());
         $statement -> bindValue(':userId', $user -> getId());
         $statement -> execute();
@@ -125,7 +125,7 @@ class Group extends Model {
 
     public function addPermission($permission) {
         $db = Db::getDb();
-        $statement = $db -> prepare("INSERT INTO grouppermissions (groupId, permissionId) VALUES (:groupId, :permissionId)");
+        $statement = $db -> prepare("INSERT INTO group_permissions (group_id, permission_id) VALUES (:groupId, :permissionId)");
         $statement -> bindValue(':groupId', $this -> getId());
         $statement -> bindValue(':permissionId', $permission -> getId());
         $statement -> execute();
@@ -133,7 +133,7 @@ class Group extends Model {
 
     public function removePermission($permission) {
         $db = Db::getDb();
-        $statement = $db -> prepare("DELETE FROM grouppermissions WHERE permissionId = :permissionId AND groupId = :groupId");
+        $statement = $db -> prepare("DELETE FROM group_permissions WHERE permission_id = :permissionId AND group_id = :groupId");
         $statement -> bindValue(':groupId', $this -> getId());
         $statement -> bindValue(':permissionId', $permission -> getId());
         $statement -> execute();
@@ -141,7 +141,7 @@ class Group extends Model {
 
     public function getMembers() {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT users.id AS id, users.firstName AS firstName, users.lastName AS lastName, users.password AS password FROM users, usergroups WHERE users.id = usergroups.userId and usergroups.groupId = :id ORDER BY lastName, firstName");
+        $statement = $db -> prepare("SELECT users.id AS id, users.first_name, users.last_name, users.password AS password FROM users, user_groups WHERE users.id = user_groups.user_id and user_groups.group_id = :id ORDER BY last_name, first_name");
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
         $rows = $statement -> fetchAll(PDO::FETCH_ASSOC);
@@ -150,7 +150,7 @@ class Group extends Model {
 
     public function getNonMembers() {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT * FROM users WHERE users.id not in (SELECT users.id FROM users, usergroups WHERE users.id = usergroups.userId and usergroups.groupId = :id) ORDER BY lastName, firstName;");
+        $statement = $db -> prepare("SELECT * FROM users WHERE users.id not in (SELECT users.id FROM users, user_groups WHERE users.id = user_groups.user_id and user_groups.group_id = :id) ORDER BY last_name, first_name;");
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
         $rows = $statement -> fetchAll(PDO::FETCH_ASSOC);
@@ -159,7 +159,7 @@ class Group extends Model {
 
     public function getPermissions() {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT permissions.id AS id, permissions.name as name FROM permissions, grouppermissions WHERE permissions.id = grouppermissions.permissionId and grouppermissions.groupId = :id ORDER BY name");
+        $statement = $db -> prepare("SELECT permissions.id AS id, permissions.name as name FROM permissions, group_permissions WHERE permissions.id = group_permissions.permission_id and group_permissions.group_id = :id ORDER BY name");
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
         $rows = $statement -> fetchAll(PDO::FETCH_ASSOC);
@@ -168,7 +168,7 @@ class Group extends Model {
 
     public function getNonPermissions() {
         $db = Db::getDb();
-        $statement = $db -> prepare("SELECT * FROM permissions WHERE permissions.id not in (SELECT permissions.id FROM permissions, grouppermissions WHERE permissions.id = grouppermissions.permissionId and grouppermissions.groupId = :id) ORDER BY name;");
+        $statement = $db -> prepare("SELECT * FROM permissions WHERE permissions.id not in (SELECT permissions.id FROM permissions, group_permissions WHERE permissions.id = group_permissions.permission_id and group_permissions.group_id = :id) ORDER BY name;");
         $statement -> bindParam(':id', $this -> id);
         $statement -> execute();
         $rows = $statement -> fetchAll(PDO::FETCH_ASSOC);
