@@ -57,6 +57,10 @@ function get_edit($params) {
         die("No question found.");
     }
     $authenticated = authenticateUser($question -> getUserId());
+    if(!$authenticated){
+      Authenticator::instance() -> ensure('edit_question');
+      $authenticated = true;
+    }
     // @formatter:off
     if($authenticated){
       renderTemplate(
@@ -155,6 +159,10 @@ function get_delete($params) {
         die("No question found.");
     }
     $authenticated = authenticateUser($question -> getUserId());
+    if(!$authenticated){
+      Authenticator::instance() -> ensure('delete_question');
+      $authenticated = true;
+    }
     if($authenticated){
       resetTags($question->getId());
       Answer::deleteByQuestionId($question->getId());
