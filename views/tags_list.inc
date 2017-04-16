@@ -8,7 +8,11 @@
         [[ if($question -> getTags() !== null) : ]]
         Filed Under: {{buildTagList($question -> getTags())}}<br>
         [[ endif; ]]
-        {{substr($question -> getContent(), 0, 100) . '...'}}
+        [[ if(strlen($question -> getContent()) > 100) : ]]
+          <span class='question'>[[echo( formatAsMarkdown(substr($question -> getContent(), 0, 100)."..."))]]</span>
+        [[ else : ]]
+          <span class='question'>[[echo( formatAsMarkdown($question -> getContent()) )]]</span>
+        [[ endif; ]]
     </li>
     [[ endforeach; ]]
 </ol>

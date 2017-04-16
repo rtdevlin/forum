@@ -7,16 +7,14 @@
     [[ endif; ]]
     <div class='value'>{{formatAsMarkdown($question -> getContent())}}</div>
 </div>
-        [[ if($auth || Authenticator::instance() -> can('delete_question')): ]]
           <p>
+        [[ if($auth || Authenticator::instance() -> can('delete_question')): ]]
             <a href="@@questions/delete/{{$question -> getId()}}@@">[Delete]</a>
-          </p>
         [[ endif; ]]
         [[ if($auth || Authenticator::instance() -> can('edit_question')): ]]
-          <p>
             <a href="@@questions/edit/{{$question -> getId()}}@@">[Edit]</a>
-          </p>
         [[ endif; ]]
+          </p>
 [[ if (isLoggedIn()) : ]]
   <form action="@@answers/add@@" method="post">
       <input type="hidden" id="user_id" name="user_id" value="{{current_user()}}" />
@@ -33,7 +31,7 @@
     <li>
         Posted on: {{substr($answer -> getInsertTs(),0,10)}} by <a href="@@users/view/{{$answer -> getUserId()}}@@">{{$answer -> getUser() -> getFirstName()}} {{$answer -> getUser() -> getLastName()}}</a><br>
         {{$answer -> getContent()}}
-        [[ if($answer->auth()) : ]]
+        [[ if($answer->auth()|| Authenticator::instance() -> can('edit_question')) : ]]
           <p>
             <a href="@@answers/delete/{{$answer -> getId()}}@@">[Delete]</a>
           </p>

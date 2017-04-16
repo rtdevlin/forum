@@ -6,12 +6,14 @@
   <p>Email: {{$user -> getEmail()}}
   <p>Password: {{preg_replace('/./','*',$user -> getPassword())}}
 </div>
-        [[ if($auth): ]]
           <p>
+        [[ if($auth || Authenticator::instance() -> can('delete_user')): ]]
             <a href="@@users/delete/{{$user -> getId()}}@@">[Delete]</a>
-            <a href="@@users/edit/{{$user -> getId()}}@@">[Edit]</a>
-          </p>
         [[ endif; ]]
+        [[ if($auth || Authenticator::instance() -> can('edit_user')): ]]
+            <a href="@@users/edit/{{$user -> getId()}}@@">[Edit]</a>
+        [[ endif; ]]
+          </p>
   <br/>
   <h2>Questions by {{getName($user -> getId())}}</h2>
     [[ foreach ($questions as $question) : ]]

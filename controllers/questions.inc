@@ -1,5 +1,6 @@
 <?php
 include_once "include/util.inc";
+include_once "include/authenticator.inc";
 include_once "models/questions.inc";
 include_once "models/tags.inc";
 include_once "models/answers.inc";
